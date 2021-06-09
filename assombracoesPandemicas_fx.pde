@@ -105,11 +105,11 @@ void setup() {
   amazonia = loadImage("2-a-amazonia-representa-mais-da-metade-das-florestas-do-planeta-1484665376333_956x500.jpg");
   amazonia.resize(1280, 720*2);
 
-  //onca = loadImage("baniwa2.png");
-  //onca.resize(720, 400);
+  onca = loadImage("baniwa2.png");
+  onca.resize(720, 400);
 
-  caborja = loadImage("F_de_Castelnau-poissonsPl18_Hoplosternum_littorale.jpg");
-  caborja.resize(400, 200);
+  caborja = loadImage("023-532x1024.jpg");
+  caborja.resize(270, 600);
 
   opencv = new OpenCV(this, telai);
   opencv.gray();
@@ -515,7 +515,7 @@ void draw() {
   pg.pop();
 
   //caborja----------------------------------------
-  if (mouseX > 600 && mouseX < 600+caborja.width && mouseY > 200 && mouseY < 200+caborja.height && posZ > 200 && posZ < 400) {
+  if (mouseX > 400 && mouseX < 600+caborja.width && mouseY > 200 && mouseY < 200+caborja.height && posZ > 100 && posZ < 800) {
     b_caborja = true;
     alphaCaborja+=4;
   } else {
@@ -529,7 +529,7 @@ void draw() {
 
   if (b_caborja) {
     pg.push();
-    pg.translate(600, 200, -300);
+    pg.translate(600, 0, -300);
     for (Contour contour : contours2) {
 
       pg.strokeWeight(0.8);
@@ -552,43 +552,43 @@ void draw() {
 
 
   ////onça-------------------------------------------
-  //if (mouseX > 200 && mouseX < onca.width && mouseY > 0 && mouseY < onca.height && posZ > 700) {
-  //  b_onca = true;
-  //  alpha1+=4;
-  //} else {
-  //  alpha1-=4;
-  //  if (alpha1 <=0) {
-  //    b_onca = false;
-  //  }
-  //}
+  if (mouseX > 200 && mouseX < onca.width && mouseY > 0 && mouseY < onca.height && posZ > 700) {
+    b_onca = true;
+    alpha1+=4;
+  } else {
+    alpha1-=4;
+    if (alpha1 <=0) {
+      b_onca = false;
+    }
+  }
 
-  //alpha1 = constrain(alpha1, 0, 255);
+  alpha1 = constrain(alpha1, 0, 255);
 
-  //if (b_onca) {
-  //  push();
-  //  translate(200, 0, -800);
-  //  beginShape(QUAD_STRIP);
-  //  for (int x = 0; x < onca.width; x+= 4) {
-  //    for (int y = 0; y < onca.height; y+= 4) {
-  //      color c = onca.get(x, y);
+  if (b_onca) {
+    push();
+    translate(200, 0, -800);
+    beginShape(QUAD_STRIP);
+    for (int x = 0; x < onca.width; x+= 4) {
+      for (int y = 0; y < onca.height; y+= 4) {
+        color c = onca.get(x, y);
 
-  //      float d = dist(x, y, mouseX+cos(x*0.1)*2, mouseY+sin(y*0.1)*2);
-  //      float mD = dist(0, 0, width/2, height/2);
-  //      float mapD = map(d, 0, mD, 0, 20);
+        float d = dist(x, y, mouseX+cos(x*0.1)*2, mouseY+sin(y*0.1)*2);
+        float mD = dist(0, 0, width/2, height/2);
+        float mapD = map(d, 0, mD, 0, 20);
 
-  //      strokeWeight(0.5);
+        strokeWeight(0.5);
 
-  //      float z = map(brightness(c), 0, 255, -50, 0);
-  //      noFill();
+        float z = map(brightness(c), 0, 255, -50, 0);
+        noFill();
 
-  //      stroke(c, alpha1);
+        stroke(c, alpha1);
 
-  //      vertex(x+cos(x*0.01+t)*50+mapD, y, z);
-  //    }
-  //  }
-  //  endShape();
-  //  pop();
-  //}
+        vertex(x+cos(x*0.01+t)*50+mapD, y, z);
+      }
+    }
+    endShape();
+    pop();
+  }
 
   if (up) {
     posY += 50;
