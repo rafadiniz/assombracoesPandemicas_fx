@@ -8,16 +8,26 @@ VerletPhysics2D physics;
 
 Blanket resist;
 Blanket op;
-Blanket b, b2, b3;
+Blanket b, b2, b3, b4;
 
-OpenCV opencv, opencv2;
+OpenCV opencv; 
+OpenCV opencv2; 
+OpenCV opencv3;
+OpenCV opencv4;
+
 ArrayList<Contour> contours = new ArrayList<Contour>();
 ArrayList<Contour> contours2 = new ArrayList<Contour>();
+ArrayList<Contour> contours3 = new ArrayList<Contour>();
+ArrayList<Contour> contours4 = new ArrayList<Contour>();
 
 PImage telai;
 PImage onca;
 PImage amazonia;
 PImage caborja;
+PImage jacare;
+PImage bbleta;
+PImage arvore;
+PImage peixe;
 
 Table tabela1;
 int c;
@@ -32,8 +42,10 @@ boolean botaoO;
 boolean botaoC;
 boolean b_caborja;
 boolean b_onca;
+boolean b_jacare;
+boolean b_bbleta;
 
-boolean left, right, up, down; 
+boolean left, right, up, down;
 
 boolean resistencia;
 
@@ -45,7 +57,7 @@ float posy[] = new float[720];
 
 float posX = 0;
 float posY = 0;
-float posZ = -200;
+float posZ = 0;
 float ZZ;
 
 float conX, conY;
@@ -59,6 +71,8 @@ PFont font1, font2;
 
 float alpha1 = 0;
 float alphaCaborja = 0;
+float alphaJacare = 0;
+float alphaBbleta = 0;
 
 int etnomidia;
 int et_y = 235;
@@ -67,6 +81,8 @@ int velet_y = 2;
 color c_artes;
 
 PGraphics pg;
+
+float ry = 0;
 
 void setup() {
   size(1280, 720, P3D);
@@ -111,6 +127,17 @@ void setup() {
   caborja = loadImage("023-532x1024.jpg");
   caborja.resize(270, 600);
 
+  jacare = loadImage("jacare_harrypinedo_recorte.png");
+  jacare.resize(720, 400);
+
+  bbleta = loadImage("borboleta_harrypinedo_recorte.png");
+  bbleta.resize(400, 260);
+
+  arvore = loadImage("arvore.jpeg");
+  //arvore.resize(400, 720);
+
+  peixe = loadImage("image5.png");
+
   opencv = new OpenCV(this, telai);
   opencv.gray();
   opencv.threshold(240);
@@ -123,10 +150,22 @@ void setup() {
   opencv2.blur(2);
   contours2 = opencv2.findContours();
 
-  font1 = createFont("Anton Regular", 200);
+  opencv3 = new OpenCV(this, arvore);
+  opencv3.gray();
+  opencv3.threshold(120);
+  opencv3.blur(2);
+  contours3 = opencv3.findContours();
+
+  opencv4 = new OpenCV(this, peixe);
+  opencv4.gray();
+  opencv4.threshold(120);
+  opencv4.blur(2);
+  contours4 = opencv4.findContours();
+
+  font1 = createFont("Barlow Bold", 200);
   textFont(font1);
 
-  font2 = createFont("Corbel", 200);
+  font2 = createFont("Barlow", 200);
 
   //printArray(font.list());
 
@@ -137,6 +176,8 @@ void setup() {
 void draw() {
   pg.beginDraw();
   pg.background(0);
+
+
 
   //directionalLight(240, 240, 240, -1, cos(0.1+t)*2, -1);
 
@@ -160,7 +201,7 @@ void draw() {
 
         pg.stroke(240, 200);
         pg.noFill();
-        pg.vertex(point.x*1.3, point.y);
+        pg.curveVertex(point.x*1.3, point.y);
       }
       pg.endShape();
     }
@@ -175,16 +216,17 @@ void draw() {
 
 
   //println(conX, " ", conY);
+  pg.push();
+  pg.translate(posX, posY, posZ);
 
   physics.update();
   pg.textFont(font2);
   if (frameCount > 3*30) {
-    pg.translate(0, 0, posZ);
 
     conX = mouseX - posX;
     conY = mouseY - posY;
 
-    pg.beginShape(TRIANGLE_STRIP);
+    pg.beginShape();
     pg.noFill();
     for (int i = 0; i < 16; i ++) {
       pg.stroke(240, 0, 0, 150);
@@ -196,8 +238,8 @@ void draw() {
         b.springs.get(i).inter = false;
       }
 
-      pg.vertex(b.springs.get(i).ax, b.springs.get(i).ay);
-      pg.vertex(b.springs.get(i).bx, b.springs.get(i).by);
+      pg.curveVertex(b.springs.get(i).ax, b.springs.get(i).ay);
+      //pg.vertex(b.springs.get(i).bx, b.springs.get(i).by);
     }
     for (int i = 0; i < 28; i ++) {
       pg.stroke(50, 100, 0, 150);
@@ -208,8 +250,8 @@ void draw() {
       } else {
         b2.springs.get(i).inter = false;
       }
-      pg.vertex(b2.springs.get(i).ax, b2.springs.get(i).ay, -600);
-      pg.vertex(b2.springs.get(i).bx, b2.springs.get(i).by, -600);
+      //pg.vertex(b2.springs.get(i).ax, b2.springs.get(i).ay, -600);
+      pg.curveVertex(b2.springs.get(i).bx, b2.springs.get(i).by, -600);
     }
     for (int i = 0; i < 18; i ++) {
       pg.stroke(50, 10, 200, 150);
@@ -220,8 +262,8 @@ void draw() {
       } else {
         b3.springs.get(i).inter = false;
       }
-      pg.vertex(b3.springs.get(i).ax, b3.springs.get(i).ay, -1200);
-      pg.vertex(b3.springs.get(i).bx, b3.springs.get(i).by, -1200);
+      //pg.vertex(b3.springs.get(i).ax, b3.springs.get(i).ay, -1200);
+      pg.curveVertex(b3.springs.get(i).bx, b3.springs.get(i).by, -1200);
     }
     pg.endShape();
 
@@ -232,9 +274,9 @@ void draw() {
       pg.noStroke();
       pg.ellipse(b.springs.get(i).ax, b.springs.get(i).ay, 8, 8);
 
-      pg.fill(240);
-      pg.textSize(20);
-      pg.text("LIDERANÇAS", b.springs.get(0).ax, b.springs.get(0).ay);
+      //pg.fill(240);
+      //pg.textSize(20);
+      //pg.text("LIDERANÇAS", b.springs.get(0).ax, b.springs.get(0).ay);
       pg.textSize(10);
 
       pg.textAlign(LEFT, BOTTOM);
@@ -246,7 +288,10 @@ void draw() {
       }
       pg.text("Sonia Guajajara", b.springs.get(3).ax, b.springs.get(3).ay);
 
-      if (dist(b.springs.get(5).ax, b.springs.get(5).ay, conX, conY) < 50) {
+      float bx1 = pg.screenX(b.springs.get(5).ax, b.springs.get(5).ay);
+      float by1 = pg.screenY(b.springs.get(5).ax, b.springs.get(5).ay);
+
+      if (dist(bx1, by1, mouseX, mouseY) < 80) {
         pg.fill(240);
       } else {
         pg.fill(200, 100, 15);
@@ -300,9 +345,9 @@ void draw() {
       pg.noStroke();
       pg.fill(255, 0, 100);
       pg.ellipse(b2.springs.get(i).ax, b2.springs.get(i).ay, 8, 8);
-      pg.textSize(20);
-      pg.fill(240);
-      pg.text("ETNOMÍDIA", b2.springs.get(0).ax, b2.springs.get(0).ay);
+      //pg.textSize(20);
+      //pg.fill(240);
+      //pg.text("ETNOMÍDIA", b2.springs.get(0).ax, b2.springs.get(0).ay);
       pg.textSize(10);
 
       pg.textAlign(LEFT, BOTTOM);
@@ -409,9 +454,9 @@ void draw() {
       pg.translate(0, 0, -1200);
       pg.fill(100, 255, 255);
       pg.ellipse(b3.springs.get(i).ax, b3.springs.get(i).ay, 8, 8);
-      pg.textSize(20);
-      pg.fill(240);
-      pg.text("CIRCUITO DAS ARTES", b3.springs.get(0).ax, b3.springs.get(0).ay);
+      //pg.textSize(20);
+      //pg.fill(240);
+      //pg.text("CIRCUITO DAS ARTES", b3.springs.get(0).ax, b3.springs.get(0).ay);
       pg.textSize(10);
 
 
@@ -474,12 +519,58 @@ void draw() {
       pg.pop();
     }
 
+
     //ellipse(b.springs.get(0).bx, b.springs.get(0).by, 40, 40);
     //ellipse(b2.springs.get(0).bx, b2.springs.get(0).by, 40, 40);
     //ellipse(b3.springs.get(0).bx, b3.springs.get(0).by, 40, 40);
-  }
 
-  pg.endDraw();
+    //----------------- arvore
+    pg.push();
+    pg.translate(width/2-(arvore.width/2), -200, -1000);
+    for (Contour contour : contours3) {
+
+      pg.strokeWeight(0.8);
+
+      pg.beginShape(QUAD_STRIP);
+      for (PVector point : contour.getPoints()) {
+        color c = arvore.get((int)point.x, (int)point.y);
+
+        float s = saturation(c);
+
+        pg.stroke(c, 127+cos(s*0.01+t)*127);
+        pg.noFill();
+        if (point.x > 10 && point.x < arvore.width-10 && point.y > 10 && point.y < arvore.height-10) {
+          //vertex(point.x, point.y,-30);
+          pg.vertex(point.x+cos(point.x*0.01+t), point.y);
+        }
+      }
+      pg.endShape();
+    }
+    pg.pop();
+
+
+    //----------- cobra
+    pg.push();
+    pg.translate(width/2-(peixe.width/2), 600, -1000);
+    for (Contour contour : contours4) {
+      pg.strokeWeight(0.8);
+
+      pg.beginShape(QUAD_STRIP);
+      for (PVector point : contour.getPoints()) {
+        color c = peixe.get((int)point.x, (int)point.y);
+
+        float s = saturation(c);
+
+        pg.stroke(c, 127+cos(s*0.01+t)*127);
+        pg.noFill();
+
+        //vertex(point.x, point.y,-30);
+        pg.vertex(point.x-tan(0.001+t)*80, point.y+sin(point.y*0.01+t*10)*20);
+      }
+      pg.endShape();
+    }
+    pg.pop();
+  }
 
   //for (int i = 0; i < 26; i ++) {
   //  push();
@@ -492,30 +583,34 @@ void draw() {
 
   //amazonia --------------------------------
   pg.push();
-  pg.translate(0, height-200, -800+posZ);
+  pg.translate(-1400, height-200, -1200+posZ);
+  pg.scale(3, 1);
   pg.rotateX(radians(448));
-  pg.beginShape(LINE_STRIP);
-  for (int x = 0; x < width; x+= 8) {
-    for (int y = 0; y < height*2; y+= 8) {
+  pg.beginShape(POINTS);
+  for (int x = 0; x < width; x+= 6) {
+    for (int y = 0; y < height*4; y+= 6) {
       color c = amazonia.get(x, y);
 
       float d = dist(x, y, mouseX+cos(x*0.1)*2, mouseY+sin(y*0.1)*2);
       float mD = dist(0, 0, width/2, height/2);
       float mapD = map(d, 0, mD, 0, 20);
 
-      pg.strokeWeight(0.5);
+      pg.strokeWeight(0.9);
 
-      float z = map(brightness(c), 0, 255, -80, 0);
+      float s = saturation(c);
+
+      float z = map(brightness(c), 0, 255, -120, 0);
       pg.noFill();
-      pg.stroke(c, 200);
+      pg.stroke(c, 127+sin(s*0.01+t)*127);
       pg.vertex(x+cos(x*0.01+t)*50+mapD, y+sin(y*0.05+t)*50+mapD, z);
     }
   }
   pg.endShape();
   pg.pop();
 
+
   //caborja----------------------------------------
-  if (mouseX > 400 && mouseX < 600+caborja.width && mouseY > 200 && mouseY < 200+caborja.height && posZ > 100 && posZ < 800) {
+  if (mouseX > 600 && mouseX < 600+caborja.width && mouseY > 200 && mouseY < 200+caborja.height && posZ > 100 && posZ < 300) {
     b_caborja = true;
     alphaCaborja+=4;
   } else {
@@ -529,7 +624,7 @@ void draw() {
 
   if (b_caborja) {
     pg.push();
-    pg.translate(600, 0, -300);
+    pg.translate(600, 50, 0);
     for (Contour contour : contours2) {
 
       pg.strokeWeight(0.8);
@@ -550,9 +645,75 @@ void draw() {
     pg.pop();
   }
 
+  //jacare----------------------------------------
+  if (mouseX > 200 && mouseX < 200+jacare.width && mouseY > 200 && mouseY < 200+jacare.height && posZ > 200 && posZ < 400) {
+    b_jacare = true;
+    alphaJacare+=4;
+  } else {
+    alphaJacare-=4;
+    if (alphaJacare <= 0 ) {
+      b_jacare = false;
+    }
+  }
+
+  alphaJacare = constrain(alphaJacare, 0, 255);
+
+  if (b_jacare) {
+    pg.push();
+    pg.translate(200, 200, -100);
+    pg.beginShape(POINTS);
+    for (int x = 0; x < jacare.width; x+= 3) {
+      for (int y = 0; y < jacare.height; y+= 3) {
+        color c = jacare.get(x, y);
+
+        pg.strokeWeight(1.5);
+
+        float z = map(saturation(c), 0, 255, -120, 0);
+        pg.noFill();
+        pg.stroke(c, alphaJacare);
+        pg.vertex(x, y+sin(y*0.01+t)*40, z);
+      }
+    }
+    pg.endShape();
+    pg.pop();
+  }
+
+  //borboleta----------------------------------------
+  if (mouseX > 800 && mouseX < 800+bbleta.width && mouseY > 100 && mouseY < 100+bbleta.height && posZ > 200 && posZ < 400) {
+    b_bbleta = true;
+    alphaBbleta+=4;
+  } else {
+    alphaBbleta-=4;
+    if (alphaBbleta <= 0 ) {
+      b_bbleta = false;
+    }
+  }
+
+  alphaBbleta = constrain(alphaBbleta, 0, 255);
+
+  if (b_bbleta) {
+    pg.push();
+    pg.translate(800, 100, -100);
+    pg.beginShape(QUAD_STRIP);
+    for (int x = 0; x < bbleta.width; x+= 3) {
+      for (int y = 0; y < bbleta.height; y+= 3) {
+        color c = bbleta.get(x, y);
+
+        pg.strokeWeight(0.8);
+
+        float z = map(saturation(c), 0, 255, -80, 0);
+        pg.noFill();
+        pg.stroke(c, alphaBbleta);
+        pg.vertex(x, y+sin(y*0.01+t)*40, z);
+      }
+    }
+    pg.endShape();
+    pg.pop();
+  }
+
 
   ////onça-------------------------------------------
-  if (mouseX > 200 && mouseX < onca.width && mouseY > 0 && mouseY < onca.height && posZ > 700) {
+  if (mouseX > -200 && mouseX < -200+onca.width && mouseY > 0 && mouseY < onca.height && posZ > 300) {
     b_onca = true;
     alpha1+=4;
   } else {
@@ -565,9 +726,9 @@ void draw() {
   alpha1 = constrain(alpha1, 0, 255);
 
   if (b_onca) {
-    push();
-    translate(200, 0, -800);
-    beginShape(QUAD_STRIP);
+    pg.push();
+    pg.translate(-200, 0, -300);
+    pg.beginShape(QUAD_STRIP);
     for (int x = 0; x < onca.width; x+= 4) {
       for (int y = 0; y < onca.height; y+= 4) {
         color c = onca.get(x, y);
@@ -576,34 +737,41 @@ void draw() {
         float mD = dist(0, 0, width/2, height/2);
         float mapD = map(d, 0, mD, 0, 20);
 
-        strokeWeight(0.5);
+        pg.strokeWeight(0.5);
 
         float z = map(brightness(c), 0, 255, -50, 0);
-        noFill();
+        pg.noFill();
 
-        stroke(c, alpha1);
+        pg.stroke(c, alpha1);
 
-        vertex(x+cos(x*0.01+t)*50+mapD, y, z);
+        pg.vertex(x+cos(x*0.01+t)*50+mapD, y, z);
       }
     }
-    endShape();
-    pop();
+    pg.endShape();
+    pg.pop();
   }
+
+  pg.pop();
 
   if (up) {
     posY += 50;
-  } 
+  }
   if (down) {
     posY -= 50;
   }
   if (left) {
-    posX += 50;
-  } 
+    posX += 10;
+  }
   if (right) {
-    posX -= 50;
+    posX -= 10;
   }
 
+  pg.endDraw();
   image(pg, 0, 0);
+
+
+
+  //saveFrame("frames/f_#####.png");
 }
 
 
@@ -633,103 +801,107 @@ void keyReleased() {
 
 void mousePressed() {
   //LIDERANÇAS
-  if (dist(b.springs.get(3).ax, b.springs.get(3).ay, conX, conY) < 50) {
-    link("https://www.instagram.com/guajajarasonia/");
-  }
-  if (dist(b.springs.get(5).ax, b.springs.get(5).ay, conX, conY) < 50) {
-    link("https://pt.wikipedia.org/wiki/Ailton_Krenak");
-  }
-  if (dist(b.springs.get(7).ax, b.springs.get(7).ay, conX, conY) < 50) {
-    link("https://www.instagram.com/celia.xakriaba/");
-  }
-  if (dist(b.springs.get(9).ax, b.springs.get(9).ay, conX, conY) < 50) {
-    link("https://www.behance.net/denilsonbaniwa");
-  }
-  if (dist(b.springs.get(11).ax, b.springs.get(11).ay, conX, conY) < 50) {
-    link("https://www.instagram.com/jaider_esbell/");
-  }
-  if (dist(b.springs.get(13).ax, b.springs.get(13).ay, conX, conY) < 50) {
-    link("https://pt.wikipedia.org/wiki/Babau_Tupinamb%C3%A1");
-  }
-  if (dist(b.springs.get(15).ax, b.springs.get(15).ay, conX, conY) < 50) {
-    link("https://www.instagram.com/daiaratukano/");
-  }
+  //if (dist(b.springs.get(3).ax, b.springs.get(3).ay, conX, conY) < 50) {
+  //  link("https://www.instagram.com/guajajarasonia/");
+  //}
+  //if (dist(b.springs.get(5).ax, b.springs.get(5).ay, conX, conY) < 50) {
+  //  link("https://pt.wikipedia.org/wiki/Ailton_Krenak");
+  //}
+  //if (dist(b.springs.get(7).ax, b.springs.get(7).ay, conX, conY) < 50) {
+  //  link("https://www.instagram.com/celia.xakriaba/");
+  //}
+  //if (dist(b.springs.get(9).ax, b.springs.get(9).ay, conX, conY) < 50) {
+  //  link("https://www.behance.net/denilsonbaniwa");
+  //}
+  //if (dist(b.springs.get(11).ax, b.springs.get(11).ay, conX, conY) < 50) {
+  //  link("https://www.instagram.com/jaider_esbell/");
+  //}
+  //if (dist(b.springs.get(13).ax, b.springs.get(13).ay, conX, conY) < 50) {
+  //  link("https://pt.wikipedia.org/wiki/Babau_Tupinamb%C3%A1");
+  //}
+  //if (dist(b.springs.get(15).ax, b.springs.get(15).ay, conX, conY) < 50) {
+  //  link("https://www.instagram.com/daiaratukano/");
+  //}
 
-  //ETNOMIDIA
-  if (dist(b2.springs.get(3).ax, b2.springs.get(3).ay, conX, conY) < 50) {
-    link("https://www.instagram.com/midiaindiaoficial/");
-  }
-  if (dist(b2.springs.get(5).ax, b2.springs.get(5).ay, conX, conY) < 50) {
-    link("https://radioyande.com/");
-  }
-  if (dist(b2.springs.get(7).ax, b2.springs.get(7).ay, conX, conY) < 50) {
-    link("http://www.videonasaldeias.org.br/2009/");
-  }
-  if (dist(b2.springs.get(9).ax, b2.springs.get(9).ay, conX, conY) < 50) {
-    link("https://www.instagram.com/tingui.filmes/");
-  }
-  if (dist(b2.springs.get(11).ax, b2.springs.get(11).ay, conX, conY) < 50) {
-    link("selvagemciclo.com.br");
-  }
-  if (dist(b2.springs.get(13).ax, b2.springs.get(13).ay, conX, conY) < 50) {
-    link("https://www.instagram.com/cristianwariu/");
-  }
-  if (dist(b2.springs.get(15).ax, b2.springs.get(15).ay, conX, conY) < 50) {
-    link("https://www.instagram.com/apiboficial/");
-  }
-  if (dist(b2.springs.get(17).ax, b2.springs.get(17).ay, conX, conY) < 50) {
-    link("https://www.instagram.com/alice_pataxo/");
-  }
-  if (dist(b2.springs.get(19).ax, b2.springs.get(19).ay, conX, conY) < 50) {
-    link("https://www.instagram.com/tukuma_pataxo/");
-  }
-  if (dist(b2.springs.get(21).ax, b2.springs.get(21).ay, conX, conY) < 50) {
-    link("https://www.instagram.com/weena_tikuna/");
-  }
-  if (dist(b2.springs.get(23).ax, b2.springs.get(23).ay, conX, conY) < 50) {
-    link("https://www.instagram.com/mimawai/");
-  }
-  if (dist(b2.springs.get(25).ax, b2.springs.get(25).ay, conX, conY) < 50) {
-    link("https://www.instagram.com/kunumi.mc/");
-  }
-  if (dist(b2.springs.get(27).ax, b2.springs.get(27).ay, conX, conY) < 50) {
-    link("https://jairantinguiboto.com/");
-  }
+  ////ETNOMIDIA
+  //if (dist(b2.springs.get(3).ax, b2.springs.get(3).ay, conX, conY) < 50) {
+  //  link("https://www.instagram.com/midiaindiaoficial/");
+  //}
+  //if (dist(b2.springs.get(5).ax, b2.springs.get(5).ay, conX, conY) < 50) {
+  //  link("https://radioyande.com/");
+  //}
+  //if (dist(b2.springs.get(7).ax, b2.springs.get(7).ay, conX, conY) < 50) {
+  //  link("http://www.videonasaldeias.org.br/2009/");
+  //}
+  //if (dist(b2.springs.get(9).ax, b2.springs.get(9).ay, conX, conY) < 50) {
+  //  link("https://www.instagram.com/tingui.filmes/");
+  //}
+  //if (dist(b2.springs.get(11).ax, b2.springs.get(11).ay, conX, conY) < 50) {
+  //  link("selvagemciclo.com.br");
+  //}
+  //if (dist(b2.springs.get(13).ax, b2.springs.get(13).ay, conX, conY) < 50) {
+  //  link("https://www.instagram.com/cristianwariu/");
+  //}
+  //if (dist(b2.springs.get(15).ax, b2.springs.get(15).ay, conX, conY) < 50) {
+  //  link("https://www.instagram.com/apiboficial/");
+  //}
+  //if (dist(b2.springs.get(17).ax, b2.springs.get(17).ay, conX, conY) < 50) {
+  //  link("https://www.instagram.com/alice_pataxo/");
+  //}
+  //if (dist(b2.springs.get(19).ax, b2.springs.get(19).ay, conX, conY) < 50) {
+  //  link("https://www.instagram.com/tukuma_pataxo/");
+  //}
+  //if (dist(b2.springs.get(21).ax, b2.springs.get(21).ay, conX, conY) < 50) {
+  //  link("https://www.instagram.com/weena_tikuna/");
+  //}
+  //if (dist(b2.springs.get(23).ax, b2.springs.get(23).ay, conX, conY) < 50) {
+  //  link("https://www.instagram.com/mimawai/");
+  //}
+  //if (dist(b2.springs.get(25).ax, b2.springs.get(25).ay, conX, conY) < 50) {
+  //  link("https://www.instagram.com/kunumi.mc/");
+  //}
+  //if (dist(b2.springs.get(27).ax, b2.springs.get(27).ay, conX, conY) < 50) {
+  //  link("https://jairantinguiboto.com/");
+  //}
 
-  //CIRCUITO DAS ARTES
-  if (dist(b3.springs.get(2).ax, b3.springs.get(2).ay, conX, conY) < 50) {
-    link("https://umoutroceu.ufba.br");
-  }
-  if (dist(b3.springs.get(4).ax, b3.springs.get(4).ay, conX, conY) < 50) {
-    link("https://festivalacidadeprecisa.org/denilson-baniwa/");
-  }
-  if (dist(b3.springs.get(6).ax, b3.springs.get(6).ay, conX, conY) < 50) {
-    link("https://pinacoteca.org.br/programacao/vexoa-nos-sabemos/");
-  }
-  if (dist(b3.springs.get(8).ax, b3.springs.get(8).ay, conX, conY) < 50) {
-    link("https://youtu.be/XjQ64Wv6WGE");
-  }
-  if (dist(b3.springs.get(10).ax, b3.springs.get(10).ay, conX, conY) < 50) {
-    link("https://www.behance.net/denilsonbaniwa");
-  }
-  if (dist(b3.springs.get(12).ax, b3.springs.get(12).ay, conX, conY) < 50) {
-    link("http://www.musa.ufpr.br/links/exposicoes/2019/2019_Makunaimi.html");
-  }
-  if (dist(b3.springs.get(14).ax, b3.springs.get(14).ay, conX, conY) < 50) {
-    link("http://34.bienal.org.br/exposicoes/8462#:~:text=A%20mostra%20reunir%C3%A1%20trabalhos%20de,%2C%20Xirixana%2C%20Wapichana%20e%20Yanomami");
-  }
-  if (dist(b3.springs.get(16).ax, b3.springs.get(14).ay, conX, conY) < 50) {
-    link("https://www.premiopipa.com/");
-  }
+  ////CIRCUITO DAS ARTES
+  //if (dist(b3.springs.get(2).ax, b3.springs.get(2).ay, conX, conY) < 50) {
+  //  link("https://umoutroceu.ufba.br");
+  //}
+  //if (dist(b3.springs.get(4).ax, b3.springs.get(4).ay, conX, conY) < 50) {
+  //  link("https://festivalacidadeprecisa.org/denilson-baniwa/");
+  //}
+  //if (dist(b3.springs.get(6).ax, b3.springs.get(6).ay, conX, conY) < 50) {
+  //  link("https://pinacoteca.org.br/programacao/vexoa-nos-sabemos/");
+  //}
+  //if (dist(b3.springs.get(8).ax, b3.springs.get(8).ay, conX, conY) < 50) {
+  //  link("https://youtu.be/XjQ64Wv6WGE");
+  //}
+  //if (dist(b3.springs.get(10).ax, b3.springs.get(10).ay, conX, conY) < 50) {
+  //  link("https://www.behance.net/denilsonbaniwa");
+  //}
+  //if (dist(b3.springs.get(12).ax, b3.springs.get(12).ay, conX, conY) < 50) {
+  //  link("http://www.musa.ufpr.br/links/exposicoes/2019/2019_Makunaimi.html");
+  //}
+  //if (dist(b3.springs.get(14).ax, b3.springs.get(14).ay, conX, conY) < 50) {
+  //  link("http://34.bienal.org.br/exposicoes/8462#:~:text=A%20mostra%20reunir%C3%A1%20trabalhos%20de,%2C%20Xirixana%2C%20Wapichana%20e%20Yanomami");
+  //}
+  //if (dist(b3.springs.get(16).ax, b3.springs.get(14).ay, conX, conY) < 50) {
+  //  link("https://www.premiopipa.com/");
+  //}
 
 
-
-  //if (mouseX > 0 && mouseX < onca.width && mouseY > 0 && mouseY < onca.height && posZ > 700) {
-  //  botaoO =! botaoO;
-  //  botaoC = false;
-  //};
+  if (mouseX > 0 && mouseX < onca.width && mouseY > 0 && mouseY < onca.height && posZ > 700) {
+    botaoO =! botaoO;
+    botaoC = false;
+  };
 
   //if (mouseX > 600 && mouseX < 600+caborja.width && mouseY > 200 && mouseY < 200+caborja.height && posZ > 200 && posZ < 400) {
+  //  botaoC =! botaoC;
+  //  botaoO = false;
+  //}
+
+  // if (mouseX > 600 && mouseX < 600+caborja.width && mouseY > 200 && mouseY < 200+caborja.height && posZ > 200 && posZ < 400) {
   //  botaoC =! botaoC;
   //  botaoO = false;
   //}
@@ -737,7 +909,7 @@ void mousePressed() {
 
 void mouseWheel(MouseEvent me) {
   final int inc = keyPressed & keyCode == CONTROL ? -50 : 50;
-  posZ = constrain(posZ + me.getCount()*inc, 0, 1600);
+  posZ = constrain(posZ + me.getCount()*inc, 0, 600);
 
   //println(posZ+ me.getCount()*inc);
 
