@@ -212,7 +212,7 @@ void draw() {
   t += 0.01;
 
   posX = constrain(posX, -600, 600);
-  posY = constrain(posY, -600, 600);
+  posY = constrain(posY, 0, 600);
 
 
   //println(conX, " ", conY);
